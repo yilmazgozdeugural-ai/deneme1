@@ -70,15 +70,6 @@ function formatMinutes(totalMinutes) {
   return `${hours}s ${minutes}dk`;
 }
 
-function normalizeStatsMap(raw) {
-  if (!raw || typeof raw !== "object") return {};
-  return raw;
-}
-
-function getStatForChannel(statsMap, channel) {
-  return statsMap[channel.id] || null;
-}
-
 function createCard(channel, isLive, platform, avatarUrl) {
   const card = document.createElement("div");
   card.className = "channel-card";
@@ -119,13 +110,17 @@ function createCard(channel, isLive, platform, avatarUrl) {
   return card;
 }
 
-function createTop10Card(channelName, weeklyMinutes, rank) {
+function createTop10Card(channelName, totalMinutes, rank, isLive) {
   const card = document.createElement("div");
   card.className = "top10-card";
   card.innerHTML = `
     <div class="top10-rank">#${rank}</div>
     <div class="top10-main">
-      <div class="top10-name">${channelName} — ${formatMinutes(weeklyMinutes)}</div>
+      <div class="top10-name">${channelName}</div>
+      <div class="top10-time">${formatMinutes(totalMinutes)}</div>
+    </div>
+    <div class="top10-status ${isLive ? "live" : "offline"}">
+      ${isLive ? "CANLI" : "OFFLINE"}
     </div>
   `;
   return card;
@@ -139,16 +134,19 @@ async function loadChannels() {
     ]);
 
     const channels = await channelsRes.json();
-    const statsMap = statsRes && statsRes.ok ? normalizeStatsMap(await statsRes.json()) : {};
+    const statsMap = statsRes && statsRes.ok ? await statsRes.json() : {};
 
     const allList = document.querySelector(".all-list");
     const top10List = document.querySelector(".top10-list");
+
+    if (!allList || !top10List) return;
+
     allList.innerHTML = "";
     top10List.innerHTML = "";
 
     const allChannels = await Promise.all(
       (channels || []).map(async (channel) => {
-        const stat = getStatForChannel(statsMap, channel);
+        const stat = statsMap[channel.name] || { minutes: 0, live: false };
 
         if (channel.platform === "youtube") {
           const live = !channel.url || channel.url === "-"
@@ -158,9 +156,9 @@ async function loadChannels() {
           return {
             ...channel,
             platformKey: "youtube",
-            isLive: live || Boolean(stat?.currentLive),
+            isLive: live || Boolean(stat.live),
             avatar: getYouTubeAvatar(channel),
-            weeklyMinutes: stat?.minutes || 0
+            totalMinutes: stat.minutes || 0
           };
         }
 
@@ -173,18 +171,18 @@ async function loadChannels() {
           return {
             ...channel,
             platformKey: "kick",
-            isLive: Boolean(kickData.isLive || stat?.currentLive),
+            isLive: Boolean(kickData.isLive || stat.live),
             avatar: kickData.avatar,
-            weeklyMinutes: stat?.weeklyMinutes || 0
+            totalMinutes: stat.minutes || 0
           };
         }
 
         return {
           ...channel,
           platformKey: channel.platform,
-          isLive: Boolean(stat?.currentLive),
+          isLive: Boolean(stat.live),
           avatar: getFallbackIcon(channel.platform),
-          weeklyMinutes: stat?.weeklyMinutes || 0
+          totalMinutes: stat.minutes || 0
         };
       })
     );
@@ -199,8 +197,8 @@ async function loadChannels() {
     });
 
     const ranked = [...allChannels]
-      .filter((c) => (c.weeklyMinutes || 0) > 0)
-      .sort((a, b) => (b.weeklyMinutes || 0) - (a.weeklyMinutes || 0))
+      .filter((c) => (c.totalMinutes || 0) > 0)
+      .sort((a, b) => (b.totalMinutes || 0) - (a.totalMinutes || 0))
       .slice(0, 10);
 
     if (!ranked.length) {
@@ -210,7 +208,9 @@ async function loadChannels() {
       top10List.appendChild(empty);
     } else {
       ranked.forEach((channel, index) => {
-        top10List.appendChild(createTop10Card(channel.name, channel.weeklyMinutes, index + 1));
+        top10List.appendChild(
+          createTop10Card(channel.name, channel.totalMinutes, index + 1, channel.isLive)
+        );
       });
     }
   } catch (err) {
@@ -219,3 +219,4 @@ async function loadChannels() {
 }
 
 loadChannels();
+setInterval(loadChannels, 60000);
