@@ -34,16 +34,6 @@ async function getKickChannelData(username) {
   }
 }
 
-function extractKickUsername(url) {
-  try {
-    const parsed = new URL(url);
-    const parts = parsed.pathname.split("/").filter(Boolean);
-    return parts[0]?.toLowerCase() || "";
-  } catch {
-    return "";
-  }
-}
-
 function extractYouTubeHandle(url) {
   try {
     const parsed = new URL(url);
@@ -86,7 +76,7 @@ function normalizeStatsMap(raw) {
 }
 
 function getStatForChannel(statsMap, channel) {
-  return statsMap[channel.name] || null;
+  return statsMap[channel.id] || null;
 }
 
 function createCard(channel, isLive, platform, avatarUrl) {
@@ -148,7 +138,7 @@ async function loadChannels() {
       fetch(STREAM_STATS_URL).catch(() => null)
     ]);
 
-    const data = await channelsRes.json();
+    const channels = await channelsRes.json();
     const statsMap = statsRes && statsRes.ok ? normalizeStatsMap(await statsRes.json()) : {};
 
     const allList = document.querySelector(".all-list");
@@ -156,41 +146,52 @@ async function loadChannels() {
     allList.innerHTML = "";
     top10List.innerHTML = "";
 
-    const youtubeStatuses = await Promise.all(
-      (data.youtube || []).map(async (channel) => {
-        const isPlaceholder = !channel.url || channel.url === "-";
+    const allChannels = await Promise.all(
+      (channels || []).map(async (channel) => {
         const stat = getStatForChannel(statsMap, channel);
-        const live = isPlaceholder ? false : await isYouTubeLive(channel.url.trim(), channel.name.trim());
+
+        if (channel.platform === "youtube") {
+          const live = !channel.url || channel.url === "-"
+            ? false
+            : await isYouTubeLive(channel.url.trim(), channel.name.trim());
+
+          return {
+            ...channel,
+            platformKey: "youtube",
+            isLive: live || Boolean(stat?.currentLive),
+            avatar: getYouTubeAvatar(channel),
+            weeklyMinutes: stat?.weeklyMinutes || 0
+          };
+        }
+
+        if (channel.platform === "kick") {
+          const username = channel.slug || "";
+          const kickData = username
+            ? await getKickChannelData(username)
+            : { isLive: false, avatar: "kk.png" };
+
+          return {
+            ...channel,
+            platformKey: "kick",
+            isLive: Boolean(kickData.isLive || stat?.currentLive),
+            avatar: kickData.avatar,
+            weeklyMinutes: stat?.weeklyMinutes || 0
+          };
+        }
+
         return {
           ...channel,
-          platformKey: "youtube",
-          isLive: live || Boolean(stat?.currentLive),
-          avatar: getYouTubeAvatar(channel),
+          platformKey: channel.platform,
+          isLive: Boolean(stat?.currentLive),
+          avatar: getFallbackIcon(channel.platform),
           weeklyMinutes: stat?.weeklyMinutes || 0
         };
       })
     );
-
-    const kickStatuses = await Promise.all(
-      (data.kick || []).map(async (channel) => {
-        const username = extractKickUsername(channel.url);
-        const stat = getStatForChannel(statsMap, channel);
-        const kickData = username ? await getKickChannelData(username) : { isLive: false, avatar: "kk.png" };
-        return {
-          ...channel,
-          platformKey: "kick",
-          isLive: Boolean(kickData.isLive || stat?.currentLive),
-          avatar: kickData.avatar,
-          weeklyMinutes: stat?.weeklyMinutes || 0
-        };
-      })
-    );
-
-    const allChannels = [...youtubeStatuses, ...kickStatuses];
 
     const orderedAll = [
       ...allChannels.filter((c) => c.isLive),
-      ...allChannels.filter((c) => !c.isLive).sort((a, b) => a.name.localeCompare(b.name, 'tr')),
+      ...allChannels.filter((c) => !c.isLive).sort((a, b) => a.name.localeCompare(b.name, "tr")),
     ];
 
     orderedAll.forEach((channel) => {
