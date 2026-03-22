@@ -57,6 +57,7 @@ function ensureStat(stats, channel, weekKey) {
     item.currentLive = false;
     item.liveSince = null;
     item.lastStreamId = null;
+    item.lastError = null;
   }
 
   return item;
@@ -70,12 +71,18 @@ function normalizeTimestamp(value) {
 
 async function fetchKickLiveState(channel) {
   const username = channel.slug?.trim()?.toLowerCase();
+
   if (!username) {
     return { isLive: false, startedAt: null, streamId: null };
   }
 
   const res = await fetch(`https://kick.com/api/v1/channels/${username}`, {
-    headers: { accept: 'application/json' }
+    headers: {
+      accept: 'application/json, text/plain, */*',
+      'user-agent': 'Mozilla/5.0',
+      referer: `https://kick.com/${username}`,
+      origin: 'https://kick.com'
+    }
   });
 
   if (!res.ok) {
@@ -90,8 +97,7 @@ async function fetchKickLiveState(channel) {
     startedAt: normalizeTimestamp(
       livestream?.created_at ||
       livestream?.start_time ||
-      livestream?.started_at ||
-      livestream?.session_title_updated_at
+      livestream?.started_at
     ),
     streamId: livestream?.id ? String(livestream.id) : null
   };
@@ -171,6 +177,7 @@ function applyLiveState(stat, liveState, nowIso) {
   }
 
   const delta = Math.max(0, sessionMinutes - (stat.currentSessionMinutes || 0));
+
   stat.weeklyMinutes += delta;
   stat.currentSessionMinutes = sessionMinutes;
   stat.currentLive = true;
@@ -199,6 +206,7 @@ async function main() {
     } catch (error) {
       stat.lastUpdatedAt = nowIso;
       stat.lastError = error instanceof Error ? error.message : String(error);
+      stat.currentLive = false;
       console.error(`Takip hatası (${channel.name}):`, stat.lastError);
     }
   }
