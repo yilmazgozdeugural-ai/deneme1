@@ -1,0 +1,119 @@
+{
+  "kick": [
+    {
+      "name": "ApexMyko",
+      "platform": "Kick",
+      "url": "https://kick.com/apex-myko"
+    },
+    {
+      "name": "KomutanLogar",
+      "platform": "Kick",
+      "url": "https://kick.com/ikomutanlogar"
+    },
+    {
+      "name": "YorukCaptain",
+      "platform": "Kick",
+      "url": "https://kick.com/yorukcaptain"
+    },
+    {
+      "name": "CsKaya",
+      "platform": "Kick",
+      "url": "https://kick.com/cskaya"
+    },
+    {
+      "name": "Weiiss",
+      "platform": "Kick",
+      "url": "https://kick.com/weiiss"
+    },
+    {
+      "name": "Gurkan17",
+      "platform": "Kick",
+      "url": "https://kick.com/gurkan17"
+    },
+    {
+      "name": "iamgxd",
+      "platform": "Kick",
+      "url": "https://kick.com/iamgxd"
+    },
+    {
+      "name": "M3Kaan",
+      "platform": "Kick",
+      "url": "https://kick.com/m3kaan"
+    },
+    {
+      "name": "Z1nd4n3gokhan",
+      "platform": "Kick",
+      "url": "https://kick.com/z1d4n3gokhan"
+    },
+    {
+      "name": "An1LL",
+      "platform": "Kick",
+      "url": "https://kick.com/An1LL"
+    },
+    {
+      "name": "Marco",
+      "platform": "Kick",
+      "url": "https://kick.com/marcotw"
+    },
+    {
+      "name": "xStaunchx",
+      "platform": "Kick",
+      "url": "https://kick.com/xstaunchx"
+    },
+    {
+      "name": "iCharlessx4",
+      "platform": "Kick",
+      "url": "https://kick.com/icharlessx4"
+    },
+    {
+      "name": "Yorukoglu",
+      "platform": "Kick",
+      "url": "https://kick.com/yorukoglu"
+    }
+  ],
+  "youtube": [
+    {
+      "name": "MykoApex",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@MykoApex/streams",
+      "channelID": "UCt6fXp7weQzK5w2j5scnOLA"
+    },
+    {
+      "name": "ERKETE35",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@ERKETE35",
+      "channelID": "UC94H9ixFz16idKH9KlM94Tw"
+    },
+    {
+      "name": "YERİNİ AL",
+      "platform": "YouTube",
+      "url": "-",
+      "channelID": "-"
+    },
+    {
+      "name": "YERİNİ AL",
+      "platform": "YouTube",
+      "url": "-",
+      "channelID": "-"
+    },
+    {
+      "name": "YERİNİ AL",
+      "platform": "YouTube",
+      "url": "-",
+      "channelID": "-"
+    },
+    {
+      "name": "YERİNİ AL",
+      "platform": "YouTube",
+      "url": "-",
+      "channelID": "-"
+    },
+    {
+      "name": "YERİNİ AL",
+      "platform": "YouTube",
+      "url": "-",
+      "channelID": "-"
+    }
+  ],
+  "icerik": []
+}
