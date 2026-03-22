@@ -1,63 +1,106 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>APEXMYKO Yayıncıları</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <script data-goatcounter="https://apexmykolive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yayıncı Top 10</title>
+
+<style>
+body {
+  background: radial-gradient(circle at top, #0b1d3a, #020617);
+  font-family: Arial;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 400px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: gold;
+}
+
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  align-items: center;
+}
+
+.rank-item span {
+  font-size: 14px;
+}
+
+.live {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.offline {
+  color: gray;
+}
+
+.top1 {
+  background: linear-gradient(90deg, gold, orange);
+  color: black;
+  font-weight: bold;
+}
+</style>
+
 </head>
 <body>
-  <video autoplay muted loop playsinline id="bg-video">
-    <source src="arkaplan.mp4" type="video/mp4">
-  </video>
 
-  <div class="bg-overlay"></div>
+<div class="container">
+  <div class="title">🔥 Yayıncı Top 10</div>
+  <div id="top10"></div>
+</div>
 
-  <header class="topbar">
-    <div class="brand">
-      <img src="logo.png" class="site-logo" alt="APEXMYKO Logo">
-      <div class="brand-text">
-        <div class="brand-title">APEXMYKO</div>
-        <div class="brand-sub">VALHALLA SPONSOR YAYINCILAR</div>
-      </div>
-    </div>
+<script>
+async function loadStreamers() {
+  const res = await fetch("https://yayincilarimiz.apexmykolive.workers.dev");
+  const data = await res.json();
 
-    <div class="social-bar">
-      <a href="https://discord.gg/apexmyko" target="_blank" rel="noopener noreferrer"><img src="dc.png" alt="Discord"></a>
-      <a href="https://www.instagram.com/apexmyko" target="_blank" rel="noopener noreferrer"><img src="insta.png" alt="Instagram"></a>
-      <a href="https://www.youtube.com/@MykoApex" target="_blank" rel="noopener noreferrer"><img src="yt.png" alt="YouTube"></a>
-      <a href="https://kick.com/apex-myko" target="_blank" rel="noopener noreferrer"><img src="kk.png" alt="Kick"></a>
-      <a href="https://www.facebook.com/ApexMyko/" target="_blank" rel="noopener noreferrer"><img src="fb.png" alt="Facebook"></a>
-    </div>
-  </header>
+  const sorted = Object.entries(data)
+    .sort((a, b) => b[1].minutes - a[1].minutes)
+    .slice(0, 10);
 
-  <main class="page">
-    <section class="hero">
-      <img src="banner.png" class="hero-banner" alt="APEXMYKO Banner">
-    </section>
+  const container = document.getElementById("top10");
+  container.innerHTML = "";
 
-    <section class="columns">
-      <div class="column top10-column">
-        <div class="section-head">
-          <h2>Yayıncı Top 10</h2>
-        </div>
-        <div class="top10-list"></div>
-      </div>
+  sorted.forEach(([name, info], index) => {
+    const div = document.createElement("div");
+    div.className = "rank-item " + (index === 0 ? "top1" : "");
 
-      <div class="column streamers-column">
-        <div class="section-head">
-          <h2>Tüm Yayıncılar</h2>
-        </div>
-        <div class="channel-list all-list"></div>
-      </div>
-    </section>
-  </main>
+    div.innerHTML = `
+      <span>#${index + 1}</span>
+      <span>${name}</span>
+      <span>${info.minutes} dk</span>
+      <span class="${info.live ? 'live' : 'offline'}">
+        ${info.live ? '● CANLI' : 'OFFLINE'}
+      </span>
+    `;
 
-  <script src="script.js"></script>
+    container.appendChild(div);
+  });
+}
+
+loadStreamers();
+setInterval(loadStreamers, 60000);
+</script>
+
 </body>
 </html>
