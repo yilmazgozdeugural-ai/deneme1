@@ -1,4 +1,4 @@
-const STREAM_STATS_URL = "stream_stats.json";
+const STREAM_STATS_URL = "https://yayincilarimiz.apexmykolive.workers.dev";
 
 async function isYouTubeLive(channelUrl, username) {
   try {
