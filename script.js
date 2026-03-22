@@ -160,7 +160,7 @@ async function loadChannels() {
             platformKey: "youtube",
             isLive: live || Boolean(stat?.currentLive),
             avatar: getYouTubeAvatar(channel),
-            weeklyMinutes: stat?.weeklyMinutes || 0
+            weeklyMinutes: stat?.minutes || 0
           };
         }
 
