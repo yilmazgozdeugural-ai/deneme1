@@ -27,8 +27,10 @@ function getWeekKey(date = new Date()) {
 }
 
 function ensureStat(stats, channel, weekKey) {
-  if (!stats[channel.name]) {
-    stats[channel.name] = {
+  if (!stats[channel.id]) {
+    stats[channel.id] = {
+      id: channel.id,
+      name: channel.name,
       platform: channel.platform,
       url: channel.url,
       weeklyMinutes: 0,
@@ -42,7 +44,9 @@ function ensureStat(stats, channel, weekKey) {
     };
   }
 
-  const item = stats[channel.name];
+  const item = stats[channel.id];
+  item.id = channel.id;
+  item.name = channel.name;
   item.platform = channel.platform;
   item.url = channel.url;
 
@@ -58,15 +62,6 @@ function ensureStat(stats, channel, weekKey) {
   return item;
 }
 
-function extractKickUsername(url) {
-  try {
-    const parsed = new URL(url);
-    return parsed.pathname.split('/').filter(Boolean)[0]?.toLowerCase() || '';
-  } catch {
-    return '';
-  }
-}
-
 function normalizeTimestamp(value) {
   if (!value) return null;
   const date = new Date(value);
@@ -74,13 +69,13 @@ function normalizeTimestamp(value) {
 }
 
 async function fetchKickLiveState(channel) {
-  const username = extractKickUsername(channel.url);
+  const username = channel.slug?.trim()?.toLowerCase();
   if (!username) {
     return { isLive: false, startedAt: null, streamId: null };
   }
 
   const res = await fetch(`https://kick.com/api/v1/channels/${username}`, {
-    headers: { 'accept': 'application/json' }
+    headers: { accept: 'application/json' }
   });
 
   if (!res.ok) {
@@ -93,20 +88,23 @@ async function fetchKickLiveState(channel) {
   return {
     isLive: livestream !== null,
     startedAt: normalizeTimestamp(
-      livestream?.created_at || livestream?.start_time || livestream?.started_at || livestream?.session_title_updated_at
+      livestream?.created_at ||
+      livestream?.start_time ||
+      livestream?.started_at ||
+      livestream?.session_title_updated_at
     ),
     streamId: livestream?.id ? String(livestream.id) : null
   };
 }
 
 async function fetchYouTubeLiveState(channel) {
-  if (!YOUTUBE_API_KEY || !channel.channelID || channel.channelID === '-') {
+  if (!YOUTUBE_API_KEY || !channel.channelId || channel.channelId === '-') {
     return { isLive: false, startedAt: null, streamId: null };
   }
 
   const searchUrl = new URL('https://www.googleapis.com/youtube/v3/search');
   searchUrl.searchParams.set('part', 'snippet');
-  searchUrl.searchParams.set('channelId', channel.channelID);
+  searchUrl.searchParams.set('channelId', channel.channelId);
   searchUrl.searchParams.set('eventType', 'live');
   searchUrl.searchParams.set('type', 'video');
   searchUrl.searchParams.set('maxResults', '1');
@@ -183,23 +181,19 @@ function applyLiveState(stat, liveState, nowIso) {
 }
 
 async function main() {
-  const channelsData = readJson(CHANNELS_FILE, { kick: [], youtube: [] });
+  const channels = readJson(CHANNELS_FILE, []);
   const stats = readJson(STATS_FILE, {});
   const weekKey = getWeekKey(new Date());
   const nowIso = new Date().toISOString();
 
-  const allChannels = [
-    ...(channelsData.kick || []),
-    ...(channelsData.youtube || [])
-  ];
-
-  for (const channel of allChannels) {
+  for (const channel of channels) {
     const stat = ensureStat(stats, channel, weekKey);
 
     try {
-      const liveState = channel.platform === 'Kick'
-        ? await fetchKickLiveState(channel)
-        : await fetchYouTubeLiveState(channel);
+      const liveState =
+        channel.platform === 'kick'
+          ? await fetchKickLiveState(channel)
+          : await fetchYouTubeLiveState(channel);
 
       applyLiveState(stat, liveState, nowIso);
     } catch (error) {
