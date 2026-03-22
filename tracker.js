@@ -84,6 +84,7 @@ async function fetchKickLiveState(channel) {
       origin: 'https://kick.com'
     }
   });
+  console.log(`KICK TEST → ${username} → ${res.status}`);
 
   if (!res.ok) {
     throw new Error(`Kick HTTP ${res.status}`);
