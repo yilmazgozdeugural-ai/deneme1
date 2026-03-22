@@ -1,10 +1,13 @@
+const STREAM_STATS_URL = "stream_stats.json";
+
 async function isYouTubeLive(channelUrl, username) {
   try {
+    if (!channelUrl || channelUrl === "-") return false;
     const res = await fetch(
       `https://youtube-stream-checker.vercel.app/api/check-live?url=${encodeURIComponent(channelUrl)}&username=${encodeURIComponent(username)}`
     );
     const data = await res.json();
-    return data.live;
+    return Boolean(data.live);
   } catch (err) {
     console.error("YouTube canlı kontrol hatası:", err);
     return false;
@@ -27,10 +30,7 @@ async function getKickChannelData(username) {
     };
   } catch (err) {
     console.error("Kick kanal verisi alınamadı:", err);
-    return {
-      isLive: false,
-      avatar: "kk.png"
-    };
+    return { isLive: false, avatar: "kk.png" };
   }
 }
 
@@ -39,7 +39,7 @@ function extractKickUsername(url) {
     const parsed = new URL(url);
     const parts = parsed.pathname.split("/").filter(Boolean);
     return parts[0]?.toLowerCase() || "";
-  } catch (err) {
+  } catch {
     return "";
   }
 }
@@ -50,7 +50,7 @@ function extractYouTubeHandle(url) {
     const parts = parsed.pathname.split("/").filter(Boolean);
     const handle = parts.find((p) => p.startsWith("@"));
     return handle ? handle.replace("@", "") : "";
-  } catch (err) {
+  } catch {
     return "";
   }
 }
@@ -58,7 +58,6 @@ function extractYouTubeHandle(url) {
 function getYouTubeAvatar(channel) {
   const handle = extractYouTubeHandle(channel.url);
   if (!handle) return "yt.png";
-
   return `https://unavatar.io/youtube/${encodeURIComponent(handle)}`;
 }
 
@@ -74,6 +73,22 @@ function getPlatformLabel(platform) {
   return "";
 }
 
+function formatMinutes(totalMinutes) {
+  const safe = Math.max(0, Math.floor(Number(totalMinutes) || 0));
+  const hours = Math.floor(safe / 60);
+  const minutes = safe % 60;
+  return `${hours}s ${minutes}dk`;
+}
+
+function normalizeStatsMap(raw) {
+  if (!raw || typeof raw !== "object") return {};
+  return raw;
+}
+
+function getStatForChannel(statsMap, channel) {
+  return statsMap[channel.name] || null;
+}
+
 function createCard(channel, isLive, platform, avatarUrl) {
   const card = document.createElement("div");
   card.className = "channel-card";
@@ -84,6 +99,8 @@ function createCard(channel, isLive, platform, avatarUrl) {
     : `<span class="offline-badge">● OFFLINE</span>`;
 
   const fallbackIcon = getFallbackIcon(platform);
+  const safeUrl = channel.url && channel.url !== "-" ? channel.url : "#";
+  const safeRel = safeUrl === "#" ? "" : 'target="_blank" rel="noopener noreferrer"';
 
   card.innerHTML = `
     <img
@@ -98,71 +115,103 @@ function createCard(channel, isLive, platform, avatarUrl) {
         ${badge}
       </div>
       <div class="channel-platform">${label}</div>
-      <a class="channel-link" href="${channel.url}" target="_blank" rel="noopener noreferrer">
+      <a class="channel-link" href="${safeUrl}" ${safeRel}>
         Kanala Git
       </a>
     </div>
   `;
 
+  if (safeUrl === "#") {
+    const link = card.querySelector(".channel-link");
+    link.addEventListener("click", (e) => e.preventDefault());
+  }
+
+  return card;
+}
+
+function createTop10Card(channelName, weeklyMinutes, rank) {
+  const card = document.createElement("div");
+  card.className = "top10-card";
+  card.innerHTML = `
+    <div class="top10-rank">#${rank}</div>
+    <div class="top10-main">
+      <div class="top10-name">${channelName} — ${formatMinutes(weeklyMinutes)}</div>
+    </div>
+  `;
   return card;
 }
 
 async function loadChannels() {
   try {
-    const res = await fetch("channels.json");
-    const data = await res.json();
+    const [channelsRes, statsRes] = await Promise.all([
+      fetch("channels.json"),
+      fetch(STREAM_STATS_URL).catch(() => null)
+    ]);
 
-    const youtubeList = document.querySelector(".youtube-list");
-    const kickList = document.querySelector(".kick-list");
+    const data = await channelsRes.json();
+    const statsMap = statsRes && statsRes.ok ? normalizeStatsMap(await statsRes.json()) : {};
 
-    youtubeList.innerHTML = "";
-    kickList.innerHTML = "";
+    const allList = document.querySelector(".all-list");
+    const top10List = document.querySelector(".top10-list");
+    allList.innerHTML = "";
+    top10List.innerHTML = "";
 
     const youtubeStatuses = await Promise.all(
-      data.youtube.map(async (channel) => {
-        const isLive = await isYouTubeLive(channel.url.trim(), channel.name.trim());
-        const avatar = getYouTubeAvatar(channel);
-
-        return { ...channel, isLive, avatar };
-      })
-    );
-
-    const orderedYoutube = [
-      ...youtubeStatuses.filter((c) => c.isLive),
-      ...youtubeStatuses.filter((c) => !c.isLive),
-    ];
-
-    orderedYoutube.forEach((channel) => {
-      youtubeList.appendChild(
-        createCard(channel, channel.isLive, "youtube", channel.avatar)
-      );
-    });
-
-    const kickStatuses = await Promise.all(
-      data.kick.map(async (channel) => {
-        const username = extractKickUsername(channel.url);
-        const kickData = username
-          ? await getKickChannelData(username)
-          : { isLive: false, avatar: "kk.png" };
-
+      (data.youtube || []).map(async (channel) => {
+        const isPlaceholder = !channel.url || channel.url === "-";
+        const stat = getStatForChannel(statsMap, channel);
+        const live = isPlaceholder ? false : await isYouTubeLive(channel.url.trim(), channel.name.trim());
         return {
           ...channel,
-          isLive: kickData.isLive,
-          avatar: kickData.avatar
+          platformKey: "youtube",
+          isLive: live || Boolean(stat?.currentLive),
+          avatar: getYouTubeAvatar(channel),
+          weeklyMinutes: stat?.weeklyMinutes || 0
         };
       })
     );
 
-    const orderedKick = [
-      ...kickStatuses.filter((c) => c.isLive),
-      ...kickStatuses.filter((c) => !c.isLive),
+    const kickStatuses = await Promise.all(
+      (data.kick || []).map(async (channel) => {
+        const username = extractKickUsername(channel.url);
+        const stat = getStatForChannel(statsMap, channel);
+        const kickData = username ? await getKickChannelData(username) : { isLive: false, avatar: "kk.png" };
+        return {
+          ...channel,
+          platformKey: "kick",
+          isLive: Boolean(kickData.isLive || stat?.currentLive),
+          avatar: kickData.avatar,
+          weeklyMinutes: stat?.weeklyMinutes || 0
+        };
+      })
+    );
+
+    const allChannels = [...youtubeStatuses, ...kickStatuses];
+
+    const orderedAll = [
+      ...allChannels.filter((c) => c.isLive),
+      ...allChannels.filter((c) => !c.isLive).sort((a, b) => a.name.localeCompare(b.name, 'tr')),
     ];
 
-    orderedKick.forEach((channel) => {
-      kickList.appendChild(
-        createCard(channel, channel.isLive, "kick", channel.avatar)
-      );
+    orderedAll.forEach((channel) => {
+      allList.appendChild(createCard(channel, channel.isLive, channel.platformKey, channel.avatar));
     });
+
+    const ranked = [...allChannels]
+      .filter((c) => (c.weeklyMinutes || 0) > 0)
+      .sort((a, b) => (b.weeklyMinutes || 0) - (a.weeklyMinutes || 0))
+      .slice(0, 10);
+
+    if (!ranked.length) {
+      const empty = document.createElement("div");
+      empty.className = "top10-card";
+      empty.innerHTML = `<div class="top10-empty">Top 10 listesi, takip verileri biriktikçe burada otomatik görünecek.</div>`;
+      top10List.appendChild(empty);
+    } else {
+      ranked.forEach((channel, index) => {
+        top10List.appendChild(createTop10Card(channel.name, channel.weeklyMinutes, index + 1));
+      });
+    }
   } catch (err) {
     console.error("Kanal listesi yüklenemedi:", err);
   }
