@@ -1,124 +1,128 @@
-{
-  "kick": [
-    {
-      "name": "ApexMyko",
-      "platform": "Kick",
-      "url": "https://kick.com/apex-myko"
-    },
-    {
-      "name": "KomutanLogar",
-      "platform": "Kick",
-      "url": "https://kick.com/ikomutanlogar"
-    },
-    {
-      "name": "YorukCaptain",
-      "platform": "Kick",
-      "url": "https://kick.com/yorukcaptain"
-    },
-    {
-      "name": "CsKaya",
-      "platform": "Kick",
-      "url": "https://kick.com/cskaya"
-    },
-    {
-      "name": "Weiiss",
-      "platform": "Kick",
-      "url": "https://kick.com/weiiss"
-    },
-    {
-      "name": "Gurkan17",
-      "platform": "Kick",
-      "url": "https://kick.com/gurkan17"
-    },
-    {
-      "name": "iamgxd",
-      "platform": "Kick",
-      "url": "https://kick.com/iamgxd"
-    },
-    {
-      "name": "M3Kaan",
-      "platform": "Kick",
-      "url": "https://kick.com/m3kaan"
-    },
-    {
-      "name": "Z1nd4n3gokhan",
-      "platform": "Kick",
-      "url": "https://kick.com/z1d4n3gokhan"
-    },
-    {
-      "name": "An1LL",
-      "platform": "Kick",
-      "url": "https://kick.com/An1LL"
-    },
-    {
-      "name": "Marco",
-      "platform": "Kick",
-      "url": "https://kick.com/marcotw"
-    },
-    {
-      "name": "xStaunchx",
-      "platform": "Kick",
-      "url": "https://kick.com/xstaunchx"
-    },
-    {
-      "name": "iCharlessx4",
-      "platform": "Kick",
-      "url": "https://kick.com/icharlessx4"
-    },
-     {
-      "name": "closer",
-      "platform": "Kick",
-      "url": "https://kick.com/closer"
-    },
-    {
-      "name": "Yorukoglu",
-      "platform": "Kick",
-      "url": "https://kick.com/yorukoglu"
-    }
-  ],
-  "youtube": [
-    {
-      "name": "MykoApex",
-      "platform": "YouTube",
-      "url": "https://www.youtube.com/@MykoApex/streams",
-      "channelID": "UCt6fXp7weQzK5w2j5scnOLA"
-    },
-    {
-      "name": "ERKETE35",
-      "platform": "YouTube",
-      "url": "https://www.youtube.com/@ERKETE35",
-      "channelID": "UC94H9ixFz16idKH9KlM94Tw"
-    },
-    {
-      "name": "CNN",
-      "platform": "YouTube",
-      "url": "https://www.youtube.com/@cnnturk",
-      "channelID": "UCV6zcRug6Hqp1UX_FdyUeBg"
-    },
-    {
-      "name": "YERİNİ AL",
-      "platform": "YouTube",
-      "url": "-",
-      "channelID": "-"
-    },
-    {
-      "name": "YERİNİ AL",
-      "platform": "YouTube",
-      "url": "-",
-      "channelID": "-"
-    },
-    {
-      "name": "YERİNİ AL",
-      "platform": "YouTube",
-      "url": "-",
-      "channelID": "-"
-    },
-    {
-      "name": "YERİNİ AL",
-      "platform": "YouTube",
-      "url": "-",
-      "channelID": "-"
-    }
-  ],
-  "icerik": []
-}
+[
+  {
+    "id": "apexmyko_kick",
+    "name": "ApexMyko",
+    "platform": "kick",
+    "slug": "apex-myko",
+    "url": "https://kick.com/apex-myko"
+  },
+  {
+    "id": "komutanlogar_kick",
+    "name": "KomutanLogar",
+    "platform": "kick",
+    "slug": "ikomutanlogar",
+    "url": "https://kick.com/ikomutanlogar"
+  },
+  {
+    "id": "yorukcaptain_kick",
+    "name": "YorukCaptain",
+    "platform": "kick",
+    "slug": "yorukcaptain",
+    "url": "https://kick.com/yorukcaptain"
+  },
+  {
+    "id": "cskaya_kick",
+    "name": "CsKaya",
+    "platform": "kick",
+    "slug": "cskaya",
+    "url": "https://kick.com/cskaya"
+  },
+  {
+    "id": "weiiss_kick",
+    "name": "Weiiss",
+    "platform": "kick",
+    "slug": "weiiss",
+    "url": "https://kick.com/weiiss"
+  },
+  {
+    "id": "gurkan17_kick",
+    "name": "Gurkan17",
+    "platform": "kick",
+    "slug": "gurkan17",
+    "url": "https://kick.com/gurkan17"
+  },
+  {
+    "id": "iamgxd_kick",
+    "name": "iamgxd",
+    "platform": "kick",
+    "slug": "iamgxd",
+    "url": "https://kick.com/iamgxd"
+  },
+  {
+    "id": "m3kaan_kick",
+    "name": "M3Kaan",
+    "platform": "kick",
+    "slug": "m3kaan",
+    "url": "https://kick.com/m3kaan"
+  },
+  {
+    "id": "z1nd4n3gokhan_kick",
+    "name": "Z1nd4n3gokhan",
+    "platform": "kick",
+    "slug": "z1d4n3gokhan",
+    "url": "https://kick.com/z1d4n3gokhan"
+  },
+  {
+    "id": "an1ll_kick",
+    "name": "An1LL",
+    "platform": "kick",
+    "slug": "an1ll",
+    "url": "https://kick.com/an1ll"
+  },
+  {
+    "id": "marco_kick",
+    "name": "Marco",
+    "platform": "kick",
+    "slug": "marcotw",
+    "url": "https://kick.com/marcotw"
+  },
+  {
+    "id": "xstaunchx_kick",
+    "name": "xStaunchx",
+    "platform": "kick",
+    "slug": "xstaunchx",
+    "url": "https://kick.com/xstaunchx"
+  },
+  {
+    "id": "icharlessx4_kick",
+    "name": "iCharlessx4",
+    "platform": "kick",
+    "slug": "icharlessx4",
+    "url": "https://kick.com/icharlessx4"
+  },
+  {
+    "id": "closer_kick",
+    "name": "closer",
+    "platform": "kick",
+    "slug": "closer",
+    "url": "https://kick.com/closer"
+  },
+  {
+    "id": "yorukoglu_kick",
+    "name": "Yorukoglu",
+    "platform": "kick",
+    "slug": "yorukoglu",
+    "url": "https://kick.com/yorukoglu"
+  },
+  {
+    "id": "mykoapex_youtube",
+    "name": "MykoApex",
+    "platform": "youtube",
+    "channelId": "UCt6fXp7weQzK5w2j5scnOLA",
+    "url": "https://www.youtube.com/@MykoApex/streams"
+  },
+  {
+    "id": "erkete35_youtube",
+    "name": "ERKETE35",
+    "platform": "youtube",
+    "channelId": "UC94H9ixFz16idKH9KlM94Tw",
+    "url": "https://www.youtube.com/@ERKETE35"
+  },
+  {
+    "id": "cnnturk_youtube",
+    "name": "CNN",
+    "platform": "youtube",
+    "channelId": "UCV6zcRug6Hqp1UX_FdyUeBg",
+    "url": "https://www.youtube.com/@cnnturk"
+  }
+]
