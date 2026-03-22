@@ -1,34 +1,30 @@
 name: Stream Tracker
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/5 * * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   track:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Repo indir
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Node kur
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Run tracker
-        run: npm run track
-        env:
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: Tracker çalıştır
+        run: node tracker.js
 
-      - name: Commit stats
+      - name: Kaydet ve pushla
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           git add stream_stats.json
-          git diff --cached --quiet || git commit -m "Update stream stats"
+          git commit -m "update stats" || echo "no changes"
           git push
