@@ -200,7 +200,7 @@ async function main() {
     try {
       const liveState =
         channel.platform === 'kick'
-          ? await fetchKickLiveState(channel)
+          ? { isLive: false, startedAt: null, streamId: null }
           : await fetchYouTubeLiveState(channel);
 
       applyLiveState(stat, liveState, nowIso);
