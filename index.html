@@ -1,164 +1,63 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ApexMyko Yayıncılar</title>
-
-<style>
-body {
-  margin: 0;
-  background: radial-gradient(circle at top, #0b1d3a, #020617);
-  font-family: Arial;
-  color: white;
-}
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  padding: 30px;
-}
-
-/* KART */
-.card {
-  background: rgba(0,0,0,0.5);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 25px;
-  box-shadow: 0 0 25px rgba(0,0,0,0.7);
-}
-
-/* BAŞLIK */
-.title {
-  text-align: center;
-  font-size: 28px;
-  color: gold;
-  margin-bottom: 30px;
-}
-
-/* TOP 10 */
-.top-row {
-  display: grid;
-  grid-template-columns: 60px 1fr 120px;
-  padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.top-row:last-child {
-  border-bottom: none;
-}
-
-.rank {
-  color: gold;
-  font-weight: bold;
-}
-
-.time {
-  text-align: right;
-  color: #ffd86b;
-  font-weight: bold;
-}
-
-/* STREAMER */
-.streamer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.streamer:last-child {
-  border-bottom: none;
-}
-
-.status.live {
-  color: #ff4d4f;
-  font-weight: bold;
-}
-
-.status.offline {
-  color: #aaa;
-}
-
-.btn {
-  background: gold;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEXMYKO Yayıncıları</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script data-goatcounter="https://apexmykolive.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="arkaplan.mp4" type="video/mp4">
+  </video>
 
-<div class="container">
+  <div class="bg-overlay"></div>
 
-  <div class="title">APEXMYKO YAYINCILARI</div>
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.png" class="site-logo" alt="APEXMYKO Logo">
+      <div class="brand-text">
+        <div class="brand-title">APEXMYKO</div>
+        <div class="brand-sub">VALHALLA SPONSOR YAYINCILAR</div>
+      </div>
+    </div>
 
-  <!-- TOP10 -->
-  <div class="card">
-    <h3>Yayıncı Top 10</h3>
-    <div id="top10-list">Yükleniyor...</div>
-  </div>
+    <div class="social-bar">
+      <a href="https://discord.gg/apexmyko" target="_blank" rel="noopener noreferrer"><img src="dc.png" alt="Discord"></a>
+      <a href="https://www.instagram.com/apexmyko" target="_blank" rel="noopener noreferrer"><img src="insta.png" alt="Instagram"></a>
+      <a href="https://www.youtube.com/@MykoApex" target="_blank" rel="noopener noreferrer"><img src="yt.png" alt="YouTube"></a>
+      <a href="https://kick.com/apex-myko" target="_blank" rel="noopener noreferrer"><img src="kk.png" alt="Kick"></a>
+      <a href="https://www.facebook.com/ApexMyko/" target="_blank" rel="noopener noreferrer"><img src="fb.png" alt="Facebook"></a>
+    </div>
+  </header>
 
-  <!-- TÜM YAYINCILAR -->
-  <div class="card">
-    <h3>Tüm Yayıncılar</h3>
-    <div id="streamer-list">Yükleniyor...</div>
-  </div>
+  <main class="page">
+    <section class="hero">
+      <img src="banner.png" class="hero-banner" alt="APEXMYKO Banner">
+    </section>
 
-</div>
-
-<script>
-fetch("https://yayincilarimiz.apexmykolive.workers.dev/")
-  .then(res => res.json())
-  .then(data => {
-
-    const topList = document.getElementById("top10-list");
-    const streamerList = document.getElementById("streamer-list");
-
-    topList.innerHTML = "";
-    streamerList.innerHTML = "";
-
-    // TOP 10
-    data.forEach((item, index) => {
-      const row = document.createElement("div");
-      row.className = "top-row";
-
-      row.innerHTML = `
-        <div class="rank">#${index + 1}</div>
-        <div>${item.name}</div>
-        <div class="time">${item.hoursText}</div>
-      `;
-
-      topList.appendChild(row);
-    });
-
-    // STREAMERS
-    data.forEach(item => {
-      const div = document.createElement("div");
-      div.className = "streamer";
-
-      div.innerHTML = `
-        <div>
-          <strong>${item.name}</strong><br>
-          <span class="status ${item.live ? "live" : "offline"}">
-            ${item.live ? "🔴 CANLI" : "⚫ OFFLINE"}
-          </span>
+    <section class="columns">
+      <div class="column top10-column">
+        <div class="section-head">
+          <h2>Yayıncı Top 10</h2>
         </div>
-        <a href="${item.url}" target="_blank">
-          <button class="btn">Kanala Git</button>
-        </a>
-      `;
+        <div class="top10-list"></div>
+      </div>
 
-      streamerList.appendChild(div);
-    });
+      <div class="column streamers-column">
+        <div class="section-head">
+          <h2>Tüm Yayıncılar</h2>
+        </div>
+        <div class="channel-list all-list"></div>
+      </div>
+    </section>
+  </main>
 
-  });
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
