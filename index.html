@@ -11,35 +11,36 @@ body {
   background: radial-gradient(circle at top, #0b1d3a, #020617);
   font-family: Arial;
   color: white;
-  padding: 30px;
 }
 
-/* GENEL */
 .container {
   max-width: 900px;
   margin: auto;
+  padding: 30px;
 }
 
+/* KART */
+.card {
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+/* BAŞLIK */
 .title {
-  font-size: 28px;
   text-align: center;
+  font-size: 28px;
   color: gold;
   margin-bottom: 30px;
 }
 
 /* TOP 10 */
-.top10 {
-  background: rgba(0,0,0,0.5);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-}
-
 .top-row {
   display: grid;
   grid-template-columns: 60px 1fr 120px;
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -52,29 +53,18 @@ body {
   font-weight: bold;
 }
 
-.name {
-  font-weight: 600;
-}
-
 .time {
   text-align: right;
   color: #ffd86b;
   font-weight: bold;
 }
 
-/* TÜM YAYINCILAR */
-.streamers {
-  background: rgba(0,0,0,0.5);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-}
-
+/* STREAMER */
 .streamer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -94,8 +84,8 @@ body {
 .btn {
   background: gold;
   border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
 }
@@ -108,14 +98,14 @@ body {
 
   <div class="title">APEXMYKO YAYINCILARI</div>
 
-  <!-- TOP 10 -->
-  <div class="top10">
+  <!-- TOP10 -->
+  <div class="card">
     <h3>Yayıncı Top 10</h3>
     <div id="top10-list">Yükleniyor...</div>
   </div>
 
   <!-- TÜM YAYINCILAR -->
-  <div class="streamers">
+  <div class="card">
     <h3>Tüm Yayıncılar</h3>
     <div id="streamer-list">Yükleniyor...</div>
   </div>
@@ -140,14 +130,14 @@ fetch("https://yayincilarimiz.apexmykolive.workers.dev/")
 
       row.innerHTML = `
         <div class="rank">#${index + 1}</div>
-        <div class="name">${item.name}</div>
+        <div>${item.name}</div>
         <div class="time">${item.hoursText}</div>
       `;
 
       topList.appendChild(row);
     });
 
-    // TÜM YAYINCILAR
+    // STREAMERS
     data.forEach(item => {
       const div = document.createElement("div");
       div.className = "streamer";
@@ -167,9 +157,6 @@ fetch("https://yayincilarimiz.apexmykolive.workers.dev/")
       streamerList.appendChild(div);
     });
 
-  })
-  .catch(err => {
-    console.error(err);
   });
 </script>
 
