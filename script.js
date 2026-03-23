@@ -103,3 +103,29 @@ function escapeAttr(value) {
 
 loadStreamers();
 setInterval(loadStreamers, 60000);
+async function loadTop10FromWorker() {
+  try {
+    const res = await fetch("https://yayincilarimiz.apexmykolive.workers.dev/");
+    const data = await res.json();
+
+    const top10List = document.querySelector(".top10-list");
+    top10List.innerHTML = "";
+
+    data.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "top10-card";
+
+      card.innerHTML = `
+        <div class="top10-rank">#${index + 1}</div>
+        <div class="top10-main">
+          <div class="top10-name">${item.name} — ${item.hoursText}</div>
+        </div>
+      `;
+
+      top10List.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Top10 worker hatası:", err);
+  }
+}
