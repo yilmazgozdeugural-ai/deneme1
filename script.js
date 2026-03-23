@@ -164,7 +164,6 @@ async function renderAllStreamers(workerData) {
         const kickData = await getKickChannelData(extractKickUsername(item.url));
         return {
           ...item,
-          live: kickData.isLive,
           avatar: kickData.avatar || "kk.png"
         };
       }
@@ -192,7 +191,6 @@ async function renderAllStreamers(workerData) {
     allList.appendChild(createChannelCard(item));
   });
 }
-
 async function loadStreamers() {
   try {
     const res = await fetch(WORKER_URL);
